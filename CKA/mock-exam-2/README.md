@@ -216,7 +216,7 @@ spec:
 $ cat john.csr | base64 | tr -d '\n'
 $ kubectl create -f john.yaml
 $ kubectl get csr
-$ kubectl certificate approve johh-developer
+$ kubectl certificate approve john-developer
 $ kubectl create role developer --resource=pods --verb=create,list,get,update,delete --namespace=development
 $ kubectl describe role developer -n development
 $ kubectl create rolebinding developer-role-binding --role=developer --user=john --namespace=development
@@ -245,7 +245,7 @@ Create a static pod on node01 called nginx-critical with image nginx. Create thi
 
 Use /etc/kubernetes/manifests as the Static Pod path for example.
 
-> Kubelet Configured for Static Pods,  Pod nginx-critical-node01 is Up and running
+> Kubelet Configured for Static Pods, Pod nginx-critical-node01 is Up and running
 
 ```bash
 $ kubectl run nginx-critical --image=nginx -o yaml --dry-run=client > nginx-critical.yaml

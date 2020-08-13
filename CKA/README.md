@@ -233,3 +233,23 @@
 ### Mock Exam 2
 
 [README](mock-exam-2/README.md)
+
+### Mock Exam 3
+
+[README](mock-exam-3/README.md)
+
+### CKA Practice Exam: Part 1
+
+[README](cka-practice-exam-part-1/README.md)
+
+### CKA Practice Exam: Part 2
+
+[README](cka-practice-exam-part-2/README.md)
+
+### CKA Practice Exam: Part 3
+
+[README](cka-practice-exam-part-3/README.md)
+
+### Practicing Skills
+
+[README](practicing-skills/README.md)
