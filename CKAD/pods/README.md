@@ -48,4 +48,22 @@ Now fix the image on the pod to 'redis'.
 
 `kubectl apply -f redis.yaml`
 
+**Creating Pods**
 
+Set up an nginx web server in their Kubernetes cluster. The nginx server will need to be accessible via network in the future, so you will need to expose port 80 as a containerPort for the nginx container. Your team has also asked you to ensure that nginx runs in quiet mode for the time being to cut down on unnecessary log output. You can do this by setting the command to nginx and passing the following arg to the container: -g daemon off; -q. As this nginx server belongs to the Web team, you will need to create it in the team's web namespace.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: web
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    command: ["nginx"]
+    args: ["-g", "daemon off;", "-q"]
+    ports:
+    - containerPort: 80
+```

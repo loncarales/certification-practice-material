@@ -121,3 +121,95 @@ $ kubectl delete pvc claim-log-1
 **Why is the PVC stuck in 'Terminating' state?**
 
 > The PVC is being used by the POD
+
+**Implement State Persistence for Kubernetes Pods**
+
+Your company needs a small database server to support a new application. They have asked you to deploy a pod running a MySQL container, but they want the data to persist even if the pod is deleted or replaced. Therefore, the MySQL database pod requires persistent storage.
+
+You will need to do the following:
+
+1. Create a PersistentVolume:
+
+* The PersistentVolume should be named mysql-pv.
+* The volume needs a capacity of 1Gi.
+* Use a storageClassName of localdisk.
+* Use the accessMode ReadWriteOnce.
+* Store the data locally on the node using a hostPath volume at the location /mnt/data.
+
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: localdisk
+  hostPath:
+    path: /mnt/data
+```
+
+`$ kubectl create -f mysql-pv`
+
+2. Create a PersistentVolumeClaim:
+
+* The PersistentVolumeClaim should be named mysql-pv-claim.
+* Set a resource request on the claim for 500Mi of storage.
+* Use the same storageClassName and accessModes as the PersistentVolume so that this claim can bind to the PersistentVolume.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+  storageClassName: localdisk
+```
+
+`$ kubectl create -f mysql-pv-claim`
+
+3. Create a MySQL Pod configured to use the PersistentVolumeClaim:
+
+* The Pod should be named mysql-pod.
+* Use the image mysql:5.6.
+* Expose the containerPort 3306.
+* Set an environment variable called MYSQL_ROOT_PASSWORD with the value password.
+* Add the PersistentVolumeClaim as a volume and mount it to the container at the path /var/lib/mysql.
+
+`$ kubectl run mysql-pod --image=mysql:5.6 --dry-run=client --port=3306 -o yaml > mysql-pod.yaml`
+
+Edit YAML accordingly
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: mysql-pod
+  name: mysql-pod
+spec:
+  containers:
+  - image: mysql:5.6
+    name: mysql-pod
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      value: "password"
+    ports:
+    - containerPort: 3306
+    volumeMounts:
+      - mountPath: "/var/lib/mysql"
+        name: data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: mysql-pv-claim
+  restartPolicy: Always
+```
